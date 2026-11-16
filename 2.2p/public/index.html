@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIT725 2.2P - Express Calculator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            color: #1f2328;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            font-size: 1.4rem;
+            border-bottom: 1px solid #d0d7de;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        input, select {
+            padding: 6px 10px;
+            font-size: 0.95rem;
+            border: 1px solid #d0d7de;
+            border-radius: 4px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        button {
+            padding: 7px 14px;
+            font-size: 0.9rem;
+            border: 1px solid #d0d7de;
+            border-radius: 4px;
+            background-color: #f6f8fa;
+            color: #1f2328;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #eaeef2;
+        }
+        button.primary {
+            background-color: #0969da;
+            border-color: #0969da;
+            color: #ffffff;
+        }
+        button.primary:hover {
+            background-color: #0860ca;
+        }
+        pre {
+            background-color: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>SIT725 Task 2.2P — Express Calculator API</h1>
+
+    <div class="form-row">
+        <div>
+            <label for="num1">Number 1</label>
+            <input type="number" id="num1" value="15">
+        </div>
+        <div>
+            <label for="num2">Number 2</label>
+            <input type="number" id="num2" value="25">
+        </div>
+        <div>
+            <label for="operation">Operation</label>
+            <select id="operation">
+                <option value="add">Add (+)</option>
+                <option value="subtract">Subtract (-)</option>
+                <option value="multiply">Multiply (*)</option>
+                <option value="divide">Divide (/)</option>
+            </select>
+    </div>
+    </div>
+
+    <div class="actions">
+        <button class="primary" onclick="callGet()">Test GET Request</button>
+        <button onclick="callPost()">Test POST Request</button>
+    </div>
+
+    <label>Server Response</label>
+    <pre id="output">Click a button above to call the Express endpoint...</pre>
+
+    <script>
+        async function callGet() {
+            const num1 = document.getElementById('num1').value;
+            const num2 = document.getElementById('num2').value;
+            const op = document.getElementById('operation').value;
+            const url = op === 'add'
+                ? `/add?num1=${num1}&num2=${num2}`
+                : `/calculate?op=${op}&num1=${num1}&num2=${num2}`;
+
+            const res = await fetch(url);
+            const data = await res.json();
+            document.getElementById('output').textContent = `GET ${url}\n\n` + JSON.stringify(data, null, 2);
+        }
+
+        async function callPost() {
+            const num1 = document.getElementById('num1').value;
+            const num2 = document.getElementById('num2').value;
+            const operation = document.getElementById('operation').value;
+
+            const res = await fetch('/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ operation, num1, num2 })
+            });
+            const data = await res.json();
+            document.getElementById('output').textContent = `POST /calculate\n\n` + JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>
